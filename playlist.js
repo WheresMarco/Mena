@@ -5,8 +5,7 @@ var async = require("async");
 
 // Function for getting Spotify API-token
 function getToken(callback) {
-  // Check if token is in localstorage and display it
-  // If not get a new one and display that
+  // TODO Check if token is in localstorage and display it. If not get a new one and display that
 
   // Prepare the postdata
   var data = querystring.stringify({
@@ -55,6 +54,7 @@ function getToken(callback) {
   });
 }
 
+// Main function that gets the data
 function getData(callback) {
   async.waterfall([
     function(callback) {
@@ -62,6 +62,8 @@ function getData(callback) {
       getToken(callback);
     },
     function(token, callback) {
+      // TODO Split into own function
+
       // Get data
       var options = {
         hostname: "api.spotify.com",
@@ -71,13 +73,16 @@ function getData(callback) {
         }
       }
 
+      // Do the request
       var request = https.request(options, function(response) {
         var body = "";
 
+        // Get some chunks
         response.on("data", function(chunk) {
           body += chunk;
         });
 
+        // When done chunking parse the data
         response.on("end", function() {
           var playlist = JSON.parse(body);
           callback(null, playlist);
