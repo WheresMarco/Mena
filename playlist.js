@@ -1,11 +1,7 @@
+var config = require('./config');
 var https = require("https");
 var querystring = require('querystring');
 var async = require("async");
-
-// TODO Store in a config-file
-var clientSecret = "";
-var playlistUser = "evil";
-var playlistID = "27xfuWd9P7XaTNxLriKY6S";
 
 // Function for getting Spotify API-token
 function getToken(callback) {
@@ -23,7 +19,7 @@ function getToken(callback) {
     path: "/api/token",
     method: "POST",
     headers: {
-      'Authorization': "Basic " + clientSecret,
+      'Authorization': "Basic " + config.clientSecret,
       'Content-Type': 'application/x-www-form-urlencoded',
       'Content-Length': Buffer.byteLength(data)
     }
@@ -42,9 +38,10 @@ function getToken(callback) {
     response.on("end", function() {
       var token = JSON.parse(body);
 
+      // TODO Save the token
+
       // Report success with a token
       callback(null, token.access_token);
-      // TODO Save the token
     });
   });
 
@@ -59,18 +56,16 @@ function getToken(callback) {
 }
 
 function getData(callback) {
-  // Get token
-
   async.waterfall([
     function(callback) {
+      // Get token
       getToken(callback);
     },
     function(token, callback) {
       // Get data
-
       var options = {
         hostname: "api.spotify.com",
-        path: "/v1/users/" + playlistUser + "/playlists/" + playlistID + "/tracks",
+        path: "/v1/users/" + config.playlistUser + "/playlists/" + config.playlistID + "/tracks",
         headers: {
           'Authorization': "Bearer " + token
         }
@@ -96,7 +91,7 @@ function getData(callback) {
       });
     }
   ], function(error, result) {
-    // Output data
+    // Callback the data
     callback(null, result);
   });
 }
