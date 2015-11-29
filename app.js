@@ -3,7 +3,7 @@ var Playlist = require("./playlist");
 
 // Create the webserver
 http.createServer(function(request, response) {
-  response.writeHeader(200, {'Content-Type': 'application/json'});
+  response.writeHeader(200, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'});
 
   // Call the getData-function that does everything
   Playlist.getData(function(error, result){
